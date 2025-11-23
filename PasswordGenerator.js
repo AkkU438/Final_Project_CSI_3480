@@ -21,6 +21,7 @@ function generatePassword(length){
     //Checks and appends certain strings
     if(!checkUpper && !checkLower && !checkNumber && !checkSymbols){
         chars += uppercase;
+        document.getElementById("value1").checked = true;
     } else{
         if(checkUpper) chars += uppercase;
         if(checkLower) chars += lowercase;
