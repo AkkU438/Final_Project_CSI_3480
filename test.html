@@ -11,5 +11,15 @@
   <h1>Hello, world!</h1>
   <script src="PasswordGenerator.js" defer></script>
   <p id="password"></p>
+  <label for="slider">Length</label>
+  <input type="range" id="slider" min="8" max="64" value="12">
+  <span id="output">12</span>
+  <button id="generate">Generate</button>
+  <form>
+    <label><input type="checkbox" id="value1" checked>numbers</label>
+    <label><input type="checkbox" id="value2" checked>uppercase</label>
+    <label><input type="checkbox" id="value3" checked>lowercase</label>
+    <label><input type="checkbox" id="value4" checked>symbols</label>
+  </form>
 </body>
 </html>
