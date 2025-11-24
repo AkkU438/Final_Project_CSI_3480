@@ -46,10 +46,14 @@ const slider = document.getElementById("slider");
 const output = document.getElementById("output");
 const p = document.getElementById("password");
 const gen = document.getElementById("generate");
+const copy = document.getElementById("copy");
 
 p.textContent = generatePassword(12);
 
-
+copy.addEventListener("click", ()=>{
+    navigator.clipboard.writeText(p.textContent);
+    alert("password copied");
+})
 slider.addEventListener("input", ()=>{
     output.textContent = slider.value;
     p.textContent = generatePassword(slider.value);
