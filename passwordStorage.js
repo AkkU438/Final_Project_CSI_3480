@@ -7,14 +7,13 @@ const websiteInput = document.getElementById("website");
 let passwordList = [];
 let currentSort = "az";
 
-function sortAZ(){
-  passwordList.sort((a, b) => a.website.localeCompare(b.website));
-};
-
-function sortZA(){
-  passwordList.sort((a, b) => b.website.localeCompare(a.website));
+function sort(){
+  if(currentSort === "az"){
+    passwordList.sort((a, b) => a.website.localeCompare(b.website));
+  } else if(currentSort === "za"){
+    passwordList.sort((a, b) => b.website.localeCompare(a.website));
+  }
 }
-
 
 function passwordHide(l){
     return "*".repeat(l.length);
@@ -37,13 +36,13 @@ function renderPasswords(){
 }
 
 
-document.getElementById("sort").addEventListener("click", function(){
+document.getElementById("sort").addEventListener("change", function(){
   if(this.value === "az"){
-    sortAZ();
     currentSort = "az";
+    sort();
   } else if(this.value === "za"){
-    sortZA();
     currentSort = "za";
+    sort();
   }
   renderPasswords();
 });
@@ -69,11 +68,7 @@ form.addEventListener("submit", function(e){
     websiteInput.value = "";
     passwordInput.value = "";
 
-    if(currentSort === "az"){
-      sortAZ();
-    } else if(currentSort === "za"){
-      sortZA();
-    }
+    sort();
     renderPasswords();
 });
 
@@ -82,6 +77,7 @@ passlist.addEventListener("click", function (e) {
     const id = Number(e.target.dataset.id);
     const index = passwordList.findIndex(p => p.id === id);
     passwordList.splice(index, 1);
+    sort();
     renderPasswords();
   }
   if(e.target.classList.contains("copy")){
