@@ -16,25 +16,35 @@ function sort(){
 }
 
 function passwordHide(l){
-    return "*".repeat(l.length);
+  return "*".repeat(l.length);
 }
 
-//Creates an li item in the unordered list and then appends it to passlist(aka the ul)
+
 function renderPasswords(){
     passlist.innerHTML = "";
    
-    passwordList.forEach((item) =>{
+    const query = search.value.toLowerCase();
+
+    const filtered = passwordList.filter(item =>
+        item.website.toLowerCase().includes(query)
+    );
+
+    filtered.forEach(item => {
         const li = document.createElement("li");
 
-        li.innerHTML = `<strong>${item.website}</strong>: ${item.password}
-        <button data-id="${item.id}" class="delete-btn">Delete</button>
-        <button data-id="${item.id}" class="copy">Copy</button>
+        li.innerHTML = `
+            <strong>${item.website}</strong>: ${item.password}
+            <button data-id="${item.id}" class="delete-btn">Delete</button>
+            <button data-id="${item.id}" class="copy">Copy</button>
         `;
 
         passlist.appendChild(li);
     });
 }
 
+search.addEventListener("input", () =>{
+  renderPasswords();
+});
 
 document.getElementById("sort").addEventListener("change", function(){
   if(this.value === "az"){
@@ -71,6 +81,7 @@ form.addEventListener("submit", function(e){
     sort();
     renderPasswords();
 });
+
 
 passlist.addEventListener("click", function (e) {
   if (e.target.classList.contains("delete-btn")) {
