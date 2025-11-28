@@ -10,12 +10,11 @@ function passwordHide(l){
     return "*".repeat(l.length);
 }
 
+//Creates an li item in the unordered list and then appends it to passlist(aka the ul)
 function renderPasswords(){
     passlist.innerHTML = "";
-
-    passwordList.sort((a, b) => a.website.localeCompare(b.website));
-
-    passwordList.forEach((item, index) =>{
+   
+    passwordList.forEach((item) =>{
         const li = document.createElement("li");
 
         li.innerHTML = `<strong>${item.website}</strong>: ${item.password}
@@ -26,8 +25,18 @@ function renderPasswords(){
         passlist.appendChild(li);
     });
 
-    attachDeleteEvents();
 }
+
+//Made to for sorthing functionality
+document.getElementById("sort").addEventListener("change", function(){
+  if(this.value === "az"){
+    passwordList.sort((a, b) => a.website.localeCompare(b.website));
+  } else if(this.value === "za"){
+    passwordList.sort((a, b) => b.website.localeCompare(a.website));
+  }
+  renderPasswords();
+});
+
 
 form.addEventListener("submit", function(e){
     e.preventDefault();
