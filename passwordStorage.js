@@ -6,11 +6,15 @@ const websiteInput = document.getElementById("website");
 
 let passwordList = [];
 
+function passwordHide(l){
+    return "*".repeat(l.length);
+}
+
 function renderPasswords(){
     passlist.innerHTML = "";
 
     passwordList.sort((a, b) => a.website.localeCompare(b.website));
-    
+
     passwordList.forEach((item, index) =>{
         const li = document.createElement("li");
 
@@ -36,7 +40,11 @@ form.addEventListener("submit", function(e){
         return;
     }
 
-    passwordList.push({id: Date.now(), website, password});
+    passwordList.push({
+        id: Date.now(),
+        website: website, 
+        password: password
+    });
 
     websiteInput.value = "";
     passwordInput.value = "";
