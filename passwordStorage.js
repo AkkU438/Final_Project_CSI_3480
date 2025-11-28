@@ -5,6 +5,16 @@ const passwordInput = document.getElementById("password");
 const websiteInput = document.getElementById("website");
 
 let passwordList = [];
+let currentSort = "az";
+
+function sortAZ(){
+  passwordList.sort((a, b) => a.website.localeCompare(b.website));
+};
+
+function sortZA(){
+  passwordList.sort((a, b) => b.website.localeCompare(a.website));
+}
+
 
 function passwordHide(l){
     return "*".repeat(l.length);
@@ -24,15 +34,16 @@ function renderPasswords(){
 
         passlist.appendChild(li);
     });
-
 }
 
-//Made to for sorthing functionality
-document.getElementById("sort").addEventListener("change", function(){
+
+document.getElementById("sort").addEventListener("click", function(){
   if(this.value === "az"){
-    passwordList.sort((a, b) => a.website.localeCompare(b.website));
+    sortAZ();
+    currentSort = "az";
   } else if(this.value === "za"){
-    passwordList.sort((a, b) => b.website.localeCompare(a.website));
+    sortZA();
+    currentSort = "za";
   }
   renderPasswords();
 });
@@ -58,6 +69,11 @@ form.addEventListener("submit", function(e){
     websiteInput.value = "";
     passwordInput.value = "";
 
+    if(currentSort === "az"){
+      sortAZ();
+    } else if(currentSort === "za"){
+      sortZA();
+    }
     renderPasswords();
 });
 
