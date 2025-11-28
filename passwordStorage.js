@@ -7,6 +7,18 @@ const websiteInput = document.getElementById("website");
 let passwordList = [];
 let currentSort = "az";
 
+function loadPasswords(){
+  const stored = localStorage.getItem("passwordList");
+  if(stored){
+    passwordList = JSON.parse(stored);
+    sort();
+  }
+}
+
+function savePasswords(){
+  localStorage.setItem("passwordList", JSON.stringify(passwordList));
+}
+
 function sort(){
   if(currentSort === "az"){
     passwordList.sort((a, b) => a.website.localeCompare(b.website));
@@ -41,6 +53,8 @@ function renderPasswords(){
 
         passlist.appendChild(li);
     });
+
+    savePasswords();
 }
 
 search.addEventListener("input", () =>{
@@ -120,12 +134,16 @@ passlist.addEventListener("click", function (e) {
     li.innerHTML = `
     <input type="text" class="edit-website" value="${item.website}">
     <input type="text" class="edit-password" value="${item.password}">
-    <button class="save">Save</button>
+    <button class="save" data-id="${item.id}">Save</button>
     <button class="cancel">Cancel</button>
     `;
   }
 
   if(e.target.classList.contains("save")){
+    const id = Number(e.target.dataset.id);
+    const index = passwordList.findIndex(p => p.id === id);
+    if(index === -1) return;
+
     const li = e.target.parentElement;
     const newWebsite = li.querySelector(".edit-website").value.trim();
     const newPassword = li.querySelector(".edit-password").value.trim();
@@ -142,3 +160,6 @@ passlist.addEventListener("click", function (e) {
     renderPasswords();
   }
 });
+
+loadPasswords();
+renderPasswords();
