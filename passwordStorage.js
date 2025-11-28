@@ -9,14 +9,17 @@ let passwordList = [];
 function renderPasswords(){
     passlist.innerHTML = "";
 
+    passwordList.sort((a, b) => a.website.localeCompare(b.website));
+    
     passwordList.forEach((item, index) =>{
         const li = document.createElement("li");
 
         li.innerHTML = `<strong>${item.website}</strong>: ${item.password}
-        <button data-index="${index}" class="delete-btn">Delete</button>
+        <button data-id="${item.id}" class="delete-btn">Delete</button>
+        <button data-id="${item.id}" class="copy">Copy</button>
         `;
 
-        passwordList.appendChild(li);
+        passlist.appendChild(li);
     });
 
     attachDeleteEvents();
@@ -32,4 +35,36 @@ form.addEventListener("submit", function(e){
         alert("Please fill out both fields");
         return;
     }
-})
+
+    passwordList.push({id: Date.now(), website, password});
+
+    websiteInput.value = "";
+    passwordInput.value = "";
+
+    renderPasswords();
+});
+
+passlist.addEventListener("click", function (e) {
+  if (e.target.classList.contains("delete-btn")) {
+    const id = Number(e.target.dataset.id);
+    const index = passwordList.findIndex(p => p.id === id);
+    passwordList.splice(index, 1);
+    renderPasswords();
+  }
+  if(e.target.classList.contains("copy")){
+    const id = Number(e.target.dataset.id);
+    const index = passwordList.findIndex(p => p.id === id);
+    const t = passwordList[index];
+    navigator.clipboard.writeText(t["password"]);
+    
+    const tooltip = document.createElement("span");
+    tooltip.textContent = "Copied!";
+    tooltip.className = "copy-tooltip"; 
+    e.target.parentElement.appendChild(tooltip);
+    
+    setTimeout(() => {
+      tooltip.remove();
+    }, 1500);
+
+  }
+});
