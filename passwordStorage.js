@@ -45,7 +45,9 @@ function renderPasswords(){
         const li = document.createElement("li");
 
         li.innerHTML = `
-            <strong>${item.website}</strong>: ${item.password}
+            <strong>${item.website}</strong>: 
+            <span class="password-text" data-id="${item.id}">${"*".repeat(item.password.length)}</span>
+            <button data-id="${item.id}" class="show">Show</button>
             <button data-id="${item.id}" class="delete-btn">Delete</button>
             <button data-id="${item.id}" class="copy">Copy</button>
             <button data-id="${item.id}" class="edit">Edit</button>
@@ -137,6 +139,17 @@ passlist.addEventListener("click", function (e) {
     <button class="save" data-id="${item.id}">Save</button>
     <button class="cancel">Cancel</button>
     `;
+  }
+
+  if(e.target.classList.contains("show") && index != -1){
+    const span = e.target.parentElement.querySelector(".password-text");
+    if(e.target.textContent === "Show"){
+      span.textContent = passwordList[index].password;
+      e.target.textContent = "Hide";
+    } else{
+      span.textContent = "*".repeat(passwordList[index].password.length);
+      e.target.textContent = "Show"
+    }
   }
 
   if(e.target.classList.contains("save")){
