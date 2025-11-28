@@ -36,6 +36,7 @@ function renderPasswords(){
             <strong>${item.website}</strong>: ${item.password}
             <button data-id="${item.id}" class="delete-btn">Delete</button>
             <button data-id="${item.id}" class="copy">Copy</button>
+            <button data-id="${item.id}" class="edit">Edit</button>
         `;
 
         passlist.appendChild(li);
@@ -84,16 +85,20 @@ form.addEventListener("submit", function(e){
 
 
 passlist.addEventListener("click", function (e) {
+  
+  //This is used so that we know which li we are targeting
+  const id = Number(e.target.dataset.id);
+  const index = passwordList.findIndex(p => p.id === id);  
+  
+  //Delete Button
   if (e.target.classList.contains("delete-btn")) {
-    const id = Number(e.target.dataset.id);
-    const index = passwordList.findIndex(p => p.id === id);
     passwordList.splice(index, 1);
     sort();
     renderPasswords();
   }
+
+  //Copy Button
   if(e.target.classList.contains("copy")){
-    const id = Number(e.target.dataset.id);
-    const index = passwordList.findIndex(p => p.id === id);
     const t = passwordList[index];
     navigator.clipboard.writeText(t["password"]);
     
@@ -105,6 +110,35 @@ passlist.addEventListener("click", function (e) {
     setTimeout(() => {
       tooltip.remove();
     }, 1500);
+  }
 
+  //Edit button
+  if(e.target.classList.contains("edit")){
+    const li = e.target.parentElement;
+    const item = passwordList[index];
+
+    li.innerHTML = `
+    <input type="text" class="edit-website" value="${item.website}">
+    <input type="text" class="edit-password" value="${item.password}">
+    <button class="save">Save</button>
+    <button class="cancel">Cancel</button>
+    `;
+  }
+
+  if(e.target.classList.contains("save")){
+    const li = e.target.parentElement;
+    const newWebsite = li.querySelector(".edit-website").value.trim();
+    const newPassword = li.querySelector(".edit-password").value.trim();
+
+    if(newWebsite !== "" && newPassword !== ""){
+      passwordList[index].website = newWebsite;
+      passwordList[index].password = newPassword;
+      sort();
+      renderPasswords();
+    }
+  }
+
+  if(e.target.classList.contains("cancel")){
+    renderPasswords();
   }
 });
