@@ -46,7 +46,7 @@ function renderPasswords(){
 
         li.innerHTML = `
             <strong>${item.website}</strong>: 
-            <span class="password-text" data-id="${item.id}">${"*".repeat(item.password.length)}</span>
+            <span class="password-text" data-id="${item.id}">${"*".repeat(12)}</span>
             <button data-id="${item.id}" class="show">Show</button>
             <button data-id="${item.id}" class="delete-btn">Delete</button>
             <button data-id="${item.id}" class="copy">Copy</button>
@@ -147,7 +147,7 @@ passlist.addEventListener("click", function (e) {
       span.textContent = passwordList[index].password;
       e.target.textContent = "Hide";
     } else{
-      span.textContent = "*".repeat(passwordList[index].password.length);
+      span.textContent = "*".repeat(12);
       e.target.textContent = "Show"
     }
   }
