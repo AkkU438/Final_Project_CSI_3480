@@ -45,7 +45,7 @@ function renderPasswords(){
         const li = document.createElement("li");
 
         li.innerHTML = `
-            <strong>${item.website}</strong>: 
+            <strong>${item.website}:</strong> 
             <span class="password-text" data-id="${item.id}">${"*".repeat(12)}</span>
             <button data-id="${item.id}" class="show">Show</button>
             <button data-id="${item.id}" class="delete-btn">Delete</button>
