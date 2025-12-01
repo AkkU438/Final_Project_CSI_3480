@@ -6,17 +6,19 @@ const websiteInput = document.getElementById("website");
 
 let passwordList = [];
 let currentSort = "az";
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjkyZGQ5MWNiMzlmN2FjZjY2NjY5MGEyIn0sImlhdCI6MTc2NDYxMjQzMCwiZXhwIjoxNzY3MjA0NDMwfQ.1hxhuqhCtPRGUFDT6G1tW6ZaEeZrY7RHN-sncCLMY9Y";
 
-function loadPasswords(){
-  const stored = localStorage.getItem("passwordList");
-  if(stored){
-    passwordList = JSON.parse(stored);
-    sort();
+
+async function loadPasswords() {
+  try {
+    const res = await fetch('http://localhost:5000/api/passwords', {
+      headers: {'x-auth-token': token}
+    });
+    passwordList = await res.json();
+    renderPasswords();
+  } catch (err) {
+    console.error('Failed to load passwords:', err);
   }
-}
-
-function savePasswords(){
-  localStorage.setItem("passwordList", JSON.stringify(passwordList));
 }
 
 function sort(){
@@ -47,16 +49,15 @@ function renderPasswords(){
         li.innerHTML = `
             <strong>${item.website}:</strong> 
             <span class="password-text" data-id="${item.id}">${"*".repeat(12)}</span>
-            <button data-id="${item.id}" class="show">Show</button>
-            <button data-id="${item.id}" class="delete-btn">Delete</button>
-            <button data-id="${item.id}" class="copy">Copy</button>
-            <button data-id="${item.id}" class="edit">Edit</button>
+            <button data-id="${item._id}" class="show">Show</button>
+            <button data-id="${item._id}" class="delete-btn">Delete</button>
+            <button data-id="${item._id}" class="copy">Copy</button>
+            <button data-id="${item._id}" class="edit">Edit</button>
         `;
 
         passlist.appendChild(li);
     });
 
-    savePasswords();
 }
 
 search.addEventListener("input", () =>{
@@ -75,7 +76,7 @@ document.getElementById("sort").addEventListener("change", function(){
 });
 
 
-form.addEventListener("submit", function(e){
+form.addEventListener("submit", async function(e){
     e.preventDefault();
 
     const website = websiteInput.value.trim();
@@ -86,31 +87,53 @@ form.addEventListener("submit", function(e){
         return;
     }
 
-    passwordList.push({
-        id: Date.now(),
-        website: website, 
-        password: password
-    });
+    try {
 
-    websiteInput.value = "";
-    passwordInput.value = "";
+      const res = await fetch('http://localhost:5000/api/passwords', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token
+        },
+        body: JSON.stringify({website, password })
+      });
+
+      const newEntry = await res.json();
+      passwordList.push(newEntry);
+      renderPasswords();
+
+      websiteInput.value = "";
+      passwordInput.value = "";
+    } catch (err) {
+      console.error('Failed to add password:', err);
+    }
 
     sort();
     renderPasswords();
 });
 
 
-passlist.addEventListener("click", function (e) {
+passlist.addEventListener("click", async function (e) {
   
   //This is used so that we know which li we are targeting
-  const id = Number(e.target.dataset.id);
-  const index = passwordList.findIndex(p => p.id === id);  
+  const id = e.target.dataset.id;
+  const index = passwordList.findIndex(p => p._id === id);  
+  console.log(index);
   
   //Delete Button
   if (e.target.classList.contains("delete-btn")) {
-    passwordList.splice(index, 1);
-    sort();
-    renderPasswords();
+    try {
+
+      await fetch(`http://localhost:5000/api/passwords/${passwordList[index]._id}`, {
+        method: 'DELETE',
+        headers: { 'x-auth-token': token}
+      });
+
+      passwordList.splice(index, 1);
+      renderPasswords();
+    } catch (err) {
+      console.error('Failed to delete password:', err);
+    }
   }
 
   //Copy Button
@@ -136,7 +159,7 @@ passlist.addEventListener("click", function (e) {
     li.innerHTML = `
     <input type="text" class="edit-website" value="${item.website}">
     <input type="text" class="edit-password" value="${item.password}">
-    <button class="save" data-id="${item.id}">Save</button>
+    <button class="save" data-id="${item._id}">Save</button>
     <button class="cancel">Cancel</button>
     `;
   }
@@ -153,19 +176,29 @@ passlist.addEventListener("click", function (e) {
   }
 
   if(e.target.classList.contains("save")){
-    const id = Number(e.target.dataset.id);
-    const index = passwordList.findIndex(p => p.id === id);
-    if(index === -1) return;
-
-    const li = e.target.parentElement;
+     const li = e.target.parentElement;
     const newWebsite = li.querySelector(".edit-website").value.trim();
     const newPassword = li.querySelector(".edit-password").value.trim();
+    const id = e.target.dataset.id;
+    const index = passwordList.findIndex(p => p._id === id);
 
-    if(newWebsite !== "" && newPassword !== ""){
-      passwordList[index].website = newWebsite;
-      passwordList[index].password = newPassword;
-      sort();
+    if (!newWebsite || !newPassword) return;
+    try {
+
+      const res = await fetch(`http://localhost:5000/api/passwords/${passwordList[index]._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token
+        },
+        body: JSON.stringify({ website: newWebsite, password: newPassword })
+      });
+
+      const updated = await res.json();
+      passwordList[index] = updated;
       renderPasswords();
+    } catch (err) {
+      console.error('Failed to update password:', err);
     }
   }
 
