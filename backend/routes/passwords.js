@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const authMiddleware = require('../middleware/auth'); // Our custom auth check
+const authMiddleware = require('../middleware/authmiddleware'); // Our custom auth check
 const PasswordEntry = require('../models/PasswordEntry');
 const { encrypt, decrypt } = require('../utils/cipher'); // Our encrypt/decrypt functions
 
