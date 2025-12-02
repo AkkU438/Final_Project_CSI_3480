@@ -5,6 +5,14 @@ const ALGORITHM = 'aes-256-cbc';
 
 // This is the line that reads your key from the .env file
 // It expects the key to be a 64-CHARACTER HEX STRING.
+if (!process.env.ENCRYPTION_KEY) {
+  throw new Error('ENCRYPTION_KEY is not set in environment variables');
+}
+
+if (process.env.ENCRYPTION_KEY.length !== 64) {
+  throw new Error('ENCRYPTION_KEY must be exactly 64 characters (32 bytes in hex)');
+}
+
 const KEY = Buffer.from(process.env.ENCRYPTION_KEY, 'hex');
 
 /**

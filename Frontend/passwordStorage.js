@@ -6,7 +6,12 @@ const websiteInput = document.getElementById("website");
 
 let passwordList = [];
 let currentSort = "az";
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjkyZGQ5MWNiMzlmN2FjZjY2NjY5MGEyIn0sImlhdCI6MTc2NDYxMjQzMCwiZXhwIjoxNzY3MjA0NDMwfQ.1hxhuqhCtPRGUFDT6G1tW6ZaEeZrY7RHN-sncCLMY9Y";
+
+// Get token from localStorage, redirect to login if not found
+const token = localStorage.getItem('authToken');
+if (!token) {
+  window.location.href = 'login.html';
+}
 
 
 async function loadPasswords() {
@@ -14,10 +19,23 @@ async function loadPasswords() {
     const res = await fetch('http://localhost:5000/api/passwords', {
       headers: {'x-auth-token': token}
     });
+    
+    if (res.status === 401) {
+      // Token is invalid or expired
+      localStorage.removeItem('authToken');
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    if (!res.ok) {
+      throw new Error(`Failed to load passwords: ${res.status}`);
+    }
+    
     passwordList = await res.json();
     renderPasswords();
   } catch (err) {
     console.error('Failed to load passwords:', err);
+    alert('Failed to load passwords. Please try again.');
   }
 }
 
@@ -48,7 +66,7 @@ function renderPasswords(){
 
         li.innerHTML = `
             <strong>${item.website}:</strong> 
-            <span class="password-text" data-id="${item.id}">${"*".repeat(12)}</span>
+            <span class="password-text" data-id="${item._id}">${"*".repeat(12)}</span>
             <button data-id="${item._id}" class="show">Show</button>
             <button data-id="${item._id}" class="delete-btn">Delete</button>
             <button data-id="${item._id}" class="copy">Copy</button>
@@ -98,18 +116,30 @@ form.addEventListener("submit", async function(e){
         body: JSON.stringify({website, password })
       });
 
+      if (res.status === 401) {
+        localStorage.removeItem('authToken');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (!res.ok) {
+        const error = await res.json();
+        alert(error.msg || 'Failed to add password');
+        return;
+      }
+
       const newEntry = await res.json();
       passwordList.push(newEntry);
+      
+      sort();
       renderPasswords();
 
       websiteInput.value = "";
       passwordInput.value = "";
     } catch (err) {
       console.error('Failed to add password:', err);
+      alert('Failed to add password. Please try again.');
     }
-
-    sort();
-    renderPasswords();
 });
 
 
@@ -123,16 +153,26 @@ passlist.addEventListener("click", async function (e) {
   //Delete Button
   if (e.target.classList.contains("delete-btn")) {
     try {
-
-      await fetch(`http://localhost:5000/api/passwords/${passwordList[index]._id}`, {
+      const res = await fetch(`http://localhost:5000/api/passwords/${passwordList[index]._id}`, {
         method: 'DELETE',
         headers: { 'x-auth-token': token}
       });
+
+      if (res.status === 401) {
+        localStorage.removeItem('authToken');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (!res.ok) {
+        throw new Error('Failed to delete password');
+      }
 
       passwordList.splice(index, 1);
       renderPasswords();
     } catch (err) {
       console.error('Failed to delete password:', err);
+      alert('Failed to delete password. Please try again.');
     }
   }
 
@@ -194,17 +234,36 @@ passlist.addEventListener("click", async function (e) {
         body: JSON.stringify({ website: newWebsite, password: newPassword })
       });
 
+      if (res.status === 401) {
+        localStorage.removeItem('authToken');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      if (!res.ok) {
+        const error = await res.json();
+        alert(error.msg || 'Failed to update password');
+        return;
+      }
+
       const updated = await res.json();
       passwordList[index] = updated;
       renderPasswords();
     } catch (err) {
       console.error('Failed to update password:', err);
+      alert('Failed to update password. Please try again.');
     }
   }
 
   if(e.target.classList.contains("cancel")){
     renderPasswords();
   }
+});
+
+// Logout functionality
+document.getElementById('logoutBtn')?.addEventListener('click', () => {
+  localStorage.removeItem('authToken');
+  window.location.href = 'login.html';
 });
 
 loadPasswords();

@@ -9,8 +9,14 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // --- Middleware ---
-// Allow your frontend (http://localhost:3000) to make requests
-app.use(cors()); 
+// Configure CORS based on environment variable
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN_WHITELIST 
+    ? process.env.CORS_ORIGIN_WHITELIST.split(',').map(origin => origin.trim())
+    : true, // Allow all origins if not specified
+  credentials: true
+};
+app.use(cors(corsOptions)); 
 // Allow the server to understand JSON data from requests
 app.use(express.json()); 
 

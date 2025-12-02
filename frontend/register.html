@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Register - Password Manager</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="stylesheet" href="auth.css">
+  </head>
+  <body>
+    <div class="auth-container">
+      <h1>Password Manager</h1>
+      <h2>Register</h2>
+      <form id="registerForm">
+        <div>
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Choose a username" required>
+        </div>
+        <div>
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Choose a password" required>
+        </div>
+        <button type="submit">Register</button>
+        <p class="error-message" id="errorMessage"></p>
+        <p class="switch-auth">Already have an account? <a href="login.html">Login here</a></p>
+      </form>
+    </div>
+    <script src="auth.js"></script>
+  </body>
+</html>
+

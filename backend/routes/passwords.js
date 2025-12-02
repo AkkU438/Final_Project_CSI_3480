@@ -40,6 +40,11 @@ router.get('/', authMiddleware, async (req, res) => {
 router.post('/', authMiddleware, async (req, res) => {
   const { website, password } = req.body;
 
+  // Validate input
+  if (!website || !password) {
+    return res.status(400).json({ msg: 'Please provide website and password' });
+  }
+
   try {
     // 1. Encrypt the password
     const { iv, password: encryptedPassword } = encrypt(password);
