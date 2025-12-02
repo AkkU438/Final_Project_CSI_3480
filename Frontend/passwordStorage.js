@@ -65,12 +65,14 @@ function renderPasswords(){
         const li = document.createElement("li");
 
         li.innerHTML = `
-            <strong>${item.website}:</strong> 
+            <strong>${item.website}</strong> 
             <span class="password-text" data-id="${item._id}">${"*".repeat(12)}</span>
-            <button data-id="${item._id}" class="show">Show</button>
-            <button data-id="${item._id}" class="delete-btn">Delete</button>
-            <button data-id="${item._id}" class="copy">Copy</button>
-            <button data-id="${item._id}" class="edit">Edit</button>
+            <div class="button-group">
+                <button data-id="${item._id}" class="show">Show</button>
+                <button data-id="${item._id}" class="copy">Copy</button>
+                <button data-id="${item._id}" class="edit">Edit</button>
+                <button data-id="${item._id}" class="delete-btn">Delete</button>
+            </div>
         `;
 
         passlist.appendChild(li);
