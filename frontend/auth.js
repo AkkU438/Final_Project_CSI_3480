@@ -1,21 +1,30 @@
 const API_URL = 'http://localhost:5000/api/auth';
 
-// Redirect to main page if already logged in
-if (localStorage.getItem('authToken')) {
-  window.location.href = 'index.html';
-}
+// Wait for DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+  // Check if we're on login or register page by looking for the forms
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  
+  // Only proceed if we're on a page with an auth form
+  if (!loginForm && !registerForm) {
+    // Not on an auth page, silently exit
+    return;
+  }
 
-// Check if we're on login or register page
-const isLoginPage = window.location.pathname.includes('login.html') || 
-                    (window.location.pathname.endsWith('/') && !window.location.pathname.includes('register.html'));
-const isRegisterPage = window.location.pathname.includes('register.html');
+  // Redirect to main page if already logged in
+  if (localStorage.getItem('authToken')) {
+    window.location.href = 'index.html';
+    return;
+  }
 
-// Get the form and error message element
-const form = isLoginPage ? document.getElementById('loginForm') : document.getElementById('registerForm');
-const errorMessage = document.getElementById('errorMessage');
+  // Determine which form we're using
+  const isLoginPage = !!loginForm;
+  const form = loginForm || registerForm;
+  const errorMessage = document.getElementById('errorMessage');
 
-// Handle form submission
-form.addEventListener('submit', async (e) => {
+  // Handle form submission
+  form.addEventListener('submit', async (e) => {
   e.preventDefault();
   errorMessage.textContent = '';
 
@@ -56,5 +65,6 @@ form.addEventListener('submit', async (e) => {
     console.error('Auth error:', err);
     errorMessage.textContent = 'Failed to connect to server. Make sure the backend is running.';
   }
+  });
 });
 
