@@ -9,41 +9,43 @@
     <link rel="stylesheet" href="passwordStorage.css">
   </head>
   <body>
-    <ul>
-    <li><a href="index.html">Password Manager</a></li>
-    <li><a href="passwordGen.html">Password Generator</a></li>
-    <li><button id="logoutBtn" style="background: #e74c3c; margin-left: auto;">Logout</button></li>
-    </ul>
-    <script src="passwordStorage.js" defer></script>
-    <h1>Password Manager</h1>
-    <p>Create, Store, and Edit Your Passwords Here!!!</p>
-    
-    
-    <input type="text" id="search" placeholder="Search...">
-    <label for="sort">Sort:</label>
-    <select id="sort">
-      <option value="az">A-Z</option>
-      <option value="za">Z-A</option>
-    </select>
-    <br><br>
-
-    <form id="form">
-      <div>
-        <label for="website">Website Name</label>
-        <input type="text" id="website" placeholder="Password Manager">
-      </div>
-
-      <div>
-        <label for="password">Password</label>
-        <input type="text" id="password" placeholder="=396Xt36g`%;">
-      </div>
+    <div class="container">
+      <ul>
+        <li><a href="index.html">Password Manager</a></li>
+        <li><a href="passwordGen.html">Password Generator</a></li>
+        <li><button id="logoutBtn">Logout</button></li>
+      </ul>
+      <h1>Password Manager</h1>
+      <p>Create, Store, and Edit Your Passwords Here!!!</p>
       
-      <button type="Submit">Add Password</button>
-    </form>
+      <div style="margin-bottom: 1.5rem;">
+        <input type="text" id="search" placeholder="Search...">
+        <label for="sort" style="display: inline-block; margin-left: 1rem;">Sort:</label>
+        <select id="sort" style="display: inline-block; width: auto; margin-left: 0.5rem;">
+          <option value="az">A-Z</option>
+          <option value="za">Z-A</option>
+        </select>
+      </div>
 
-    <h3>Saved Passwords</h3>
-    <ul id="password-list">
+      <form id="form">
+        <div>
+          <label for="website">Website Name</label>
+          <input type="text" id="website" placeholder="Password Manager">
+        </div>
 
-    </ul>
+        <div>
+          <label for="password">Password</label>
+          <input type="text" id="password" placeholder="=396Xt36g`%;">
+        </div>
+        
+        <button type="Submit">Add Password</button>
+      </form>
+
+      <h3>Saved Passwords</h3>
+      <ul id="password-list">
+
+      </ul>
+    </div>
+    <script src="passwordStorage.js" defer></script>
   </body>
 </html>
